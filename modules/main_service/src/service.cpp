@@ -49,6 +49,7 @@ namespace l1_memory_cache
             },
             config::addr);
         std::cout << "Server init finished" << std::endl;
+        std::cout << config::addr << std::endl;
     }
     void Service::Run()
     {

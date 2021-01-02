@@ -19,7 +19,7 @@ RUN cd /evpp/build && \
     make -j8 &&\
     make install
 #Common tools
-RUN apt-get install -y vim
+RUN apt-get install -y vim netcat
 RUN echo 'PS1="\\t🎅\[\e[33;41m\][\[\e[m\]\[\e[32m\]\u\[\e[m\]\[\e[36m\]@\[\e[m\]\[\e[34m\]\h\[\e[m\]\[\e[33;41m\]]\[\e[m\]🎄 \n \w: "' > ~/.bashrc
 WORKDIR /app
 CMD bash
