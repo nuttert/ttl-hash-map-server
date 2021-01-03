@@ -25,29 +25,29 @@ namespace l1_memory_cache
     }
     void TTLManager::PushKey(const QueueType &value)
     {
-        std::shared_lock<Mutex> lock(mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         queue_.push(value);
     }
     void TTLManager::PushKey(QueueType &&value)
     {
-        std::shared_lock<Mutex> lock(mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         queue_.push(std::move(value));
     }
     void TTLManager::PushKeys(const std::vector<QueueType> &values)
     {
-        std::shared_lock<Mutex> lock(mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         for (const auto &value : values)
             queue_.push(value);
     }
     void TTLManager::PushKeys(std::vector<QueueType> &&values)
     {
-        std::shared_lock<Mutex> lock(mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         for (auto &&value : values)
             queue_.push(std::move(value));
     }
     void TTLManager::PopKey()
     {
-        std::shared_lock<Mutex> lock(mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         queue_.pop();
     }
     TTLManager::QueueType TTLManager::GetKey() const

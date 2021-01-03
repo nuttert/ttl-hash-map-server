@@ -20,7 +20,6 @@ namespace l1_memory_cache
         template<typename T>
         using Optional = boost::optional<T&>;
     public:
-        virtual Optional<ValueType &> Get(const KeyType &key) = 0;
         virtual Optional<const ValueType &> Get(const KeyType &key) const = 0;
         virtual std::vector<Optional<const ValueType &>> Get(const std::vector<KeyType> &keys) const = 0;
 
