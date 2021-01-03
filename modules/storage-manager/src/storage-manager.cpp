@@ -16,7 +16,8 @@ namespace l1_memory_cache
     std::vector<std::optional<StorageManager::ValueType>> StorageManager::Get(const std::vector<KeyType> &keys) const
     {
         std::shared_lock<Mutex> lock(mutex_);
-        std::vector<Optional<ValueType>> values{};
+        std::vector<Optional<ValueType>> values;
+        values.reserve(keys.size());
 
         for (const auto &key : keys)
         {
@@ -73,7 +74,7 @@ namespace l1_memory_cache
         std::shared_lock<Mutex> lock(mutex_);
         std::vector<KeyType> keys;
         keys.reserve(map_.size());
-        
+
         for (const auto &[key, _] : map_)
             keys.push_back(key);
         return keys;
