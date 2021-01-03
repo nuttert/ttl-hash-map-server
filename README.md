@@ -8,7 +8,14 @@
 `make run`
 ## Run client
 `netcat localhost 9099`
+## Commands list
+`SET <map>`
 
+`GET <string array> | <string> -> <array> | <map> | <string>`
+
+`DEL <string array> | <string>`
+
+`KEYS -> <string array>`
 ## Commands examples
 - SET, KEYS
 
