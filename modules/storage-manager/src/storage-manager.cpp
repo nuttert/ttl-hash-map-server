@@ -32,25 +32,25 @@ namespace l1_memory_cache
     void StorageManager::Set(const KeyType &key, const ValueType &value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-             auto [iterator, inserted] = map_.insert({key, value});
+        auto [iterator, inserted] = map_.insert({key, value});
 
-            if (!inserted)
-                iterator->second = value;
+        if (!inserted)
+            iterator->second = value;
     }
     void StorageManager::Set(const KeyType &key, ValueType &&value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-            auto [iterator, inserted] = map_.insert({key, std::move(value)});
+        auto [iterator, inserted] = map_.insert({key, std::move(value)});
 
-            if (!inserted)
-                iterator->second = std::move(value);
+        if (!inserted)
+            iterator->second = std::move(value);
     }
     void StorageManager::Set(const Map &map)
     {
         std::lock_guard<Mutex> lock(mutex_);
         for (const auto &[key, value] : map)
         {
-             auto [iterator, inserted] = map_.insert({key, value});
+            auto [iterator, inserted] = map_.insert({key, value});
 
             if (!inserted)
                 iterator->second = value;
