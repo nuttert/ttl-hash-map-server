@@ -2,8 +2,6 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-// Boost optional поскольку он поддерживает ссылки, а std::optional нет
-#include <boost/optional/optional.hpp>
 
 #include "value.hpp"
 
@@ -18,10 +16,10 @@ namespace l1_memory_cache
         using Map = std::unordered_map<KeyType, models::Value>;
 
         template<typename T>
-        using Optional = boost::optional<T&>;
+        using Optional = std::optional<T>;
     public:
-        virtual Optional<const ValueType &> Get(const KeyType &key) const = 0;
-        virtual std::vector<Optional<const ValueType &>> Get(const std::vector<KeyType> &keys) const = 0;
+        virtual Optional<ValueType> Get(const KeyType &key) const = 0;
+        virtual std::vector<Optional<ValueType>> Get(const std::vector<KeyType> &keys) const = 0;
 
         virtual void Set(const KeyType &key, const ValueType &value) = 0;
         virtual void Set(const KeyType &key, ValueType &&value) = 0;

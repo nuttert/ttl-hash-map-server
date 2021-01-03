@@ -18,8 +18,8 @@ namespace l1_memory_cache
     public:
         StorageManager() = default;
 
-        Optional<const ValueType &> Get(const KeyType &key) const override;
-        std::vector<Optional<const ValueType &>> Get(const std::vector<KeyType> &keys) const override;
+        Optional<ValueType> Get(const KeyType &key) const override;
+        std::vector<Optional<ValueType>> Get(const std::vector<KeyType> &keys) const override;
 
         void Set(const KeyType &key, const ValueType &value) override;
         void Set(const KeyType &key, ValueType &&value) override;

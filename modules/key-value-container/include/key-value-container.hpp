@@ -33,8 +33,8 @@ namespace l1_memory_cache
                           std::shared_ptr<TTLManagerInterface> ttl_manager = nullptr);
         void SetTTL(const Duration &ttl);
 
-        Optional<const ValueType &> Get(const KeyType &key) const;
-        std::vector<Optional<const ValueType &>> Get(const std::vector<KeyType> &keys) const;
+        Optional<ValueType> Get(const KeyType &key) const;
+        std::vector<Optional<ValueType>> Get(const std::vector<KeyType> &keys) const;
 
         template <typename T>
         void Set(const KeyType &key, const T &value);

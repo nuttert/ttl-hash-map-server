@@ -3,25 +3,26 @@
 
 namespace l1_memory_cache
 {
-    StorageManager::Optional<const StorageManager::ValueType &> StorageManager::Get(const KeyType &key) const
+    std::optional<StorageManager::ValueType> StorageManager::Get(const KeyType &key) const
     {
         std::shared_lock<Mutex> lock(mutex_);
         auto it = map_.find(key);
         if (it == map_.end())
-            return boost::none;
-        return it->second;
+            return std::nullopt;
+        StorageManager::ValueType value = it->second;
+        return value;
     }
 
-    std::vector<StorageManager::Optional<const StorageManager::ValueType &>> StorageManager::Get(const std::vector<KeyType> &keys) const
+    std::vector<std::optional<StorageManager::ValueType>> StorageManager::Get(const std::vector<KeyType> &keys) const
     {
         std::shared_lock<Mutex> lock(mutex_);
-        std::vector<Optional<const ValueType &>> values{};
+        std::vector<Optional<ValueType>> values{};
 
         for (const auto &key : keys)
         {
             auto it = map_.find(key);
             if (it == map_.end())
-                values.push_back(boost::none);
+                values.push_back(std::nullopt);
             else
                 values.push_back(it->second);
         }
@@ -30,29 +31,26 @@ namespace l1_memory_cache
     void StorageManager::Set(const KeyType &key, const ValueType &value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        if(map_.find(key) != map_.end()) throw std::runtime_error("Key already exists");
-        map_.insert({key, value});
+        if(!map_.insert({key, value}).second) throw std::runtime_error("Key already exists");
     }
     void StorageManager::Set(const KeyType &key, ValueType &&value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        if(map_.find(key) != map_.end()) throw std::runtime_error("Key already exists");
-        map_.insert({key, std::move(value)});
+        if(!map_.insert({key, std::move(value)}).second) throw std::runtime_error("Key already exists");
     }
     void StorageManager::Set(const Map &map)
     {
         std::lock_guard<Mutex> lock(mutex_);
         for (const auto &[key, value] : map){
-            if(map_.find(key) != map_.end()) throw std::runtime_error("Key already exists");
-            map_.insert({key, value});
+            if(!map_.insert({key, value}).second) throw std::runtime_error("Key already exists");
+            
         }
     }
     void StorageManager::Set(Map &&map)
     {
         std::lock_guard<Mutex> lock(mutex_);
         for (const auto &[key, value] : map){
-            if(map_.find(key) != map_.end()) throw std::runtime_error("Key already exists");
-            map_.insert({key, std::move(value)});
+            if(!map_.insert({key, std::move(value)}).second) throw std::runtime_error("Key already exists");
         }
     }
 
@@ -73,7 +71,9 @@ namespace l1_memory_cache
     std::vector<StorageManager::KeyType> StorageManager::Keys()
     {
         std::shared_lock<Mutex> lock(mutex_);
-        std::vector<KeyType> keys{};
+        std::vector<KeyType> keys;
+        keys.reserve(map_.size());
+        
         for (const auto &[key, _] : map_)
             keys.push_back(key);
         return keys;

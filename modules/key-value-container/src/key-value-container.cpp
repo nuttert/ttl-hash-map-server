@@ -21,15 +21,15 @@ namespace l1_memory_cache
         ttl_ = ttl;
         ttl_manager_ptr_->SetTTL(ttl);
     }
-    KeyValueContainer::Optional<const KeyValueContainer::ValueType &> KeyValueContainer::Get(const KeyType &key) const
+    std::optional<KeyValueContainer::ValueType> KeyValueContainer::Get(const KeyType &key) const
     {
         const auto &storage = *storage_manager_ptr_;
         const auto value = storage.Get(key);
         if (value)
             return value;
-        return boost::none;
+        return std::nullopt;
     }
-    std::vector<KeyValueContainer::Optional<const KeyValueContainer::ValueType &>> KeyValueContainer::Get(const std::vector<KeyType> &keys) const{
+    std::vector<KeyValueContainer::Optional<KeyValueContainer::ValueType>> KeyValueContainer::Get(const std::vector<KeyType> &keys) const{
         const auto &storage = *storage_manager_ptr_;
         const auto values = storage.Get(keys);
         return values;
