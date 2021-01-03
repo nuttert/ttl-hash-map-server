@@ -1,5 +1,5 @@
 # ttl-hash-map-server
-![image](https://github.com/nuttert/ttl-hash-map-server/blob/master/readme_images/schema_.png)
+![image](https://github.com/nuttert/ttl-hash-map-server/blob/master/readme_images/schema__.png)
 ## Build
 `docker-compose up --build`
 ## Run Server
