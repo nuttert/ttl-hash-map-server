@@ -16,7 +16,7 @@ namespace
     std::string OptionalVectorToStr(const std::vector<OptionalType> &values)
     {
         if (values.size() == 1)
-            return (values.front() ? std::string(*values.front()): "null");
+            return (values.front() ? std::string(*values.front()) : "null");
         std::string values_str = "[";
         for (size_t i = 0; i < values.size(); ++i)
         {
@@ -71,12 +71,9 @@ namespace l1_memory_cache
         {
         case parser::ECommands::kSet:
         {
-            try{
-                for (const auto &[key, value] : parse_result.map)
-                    container_.Set(parse_result.map);
-            }catch(...){
-                conn->Send("Key already exists");
-            }
+            for (const auto &[key, value] : parse_result.map)
+                container_.Set(parse_result.map);
+            conn->Send("OK");
             break;
         }
         case parser::ECommands::kGet:
@@ -87,6 +84,7 @@ namespace l1_memory_cache
         }
         case parser::ECommands::kDel:
             container_.Del(parse_result.vector);
+            conn->Send("OK");
             break;
         case parser::ECommands::kKeys:
         {

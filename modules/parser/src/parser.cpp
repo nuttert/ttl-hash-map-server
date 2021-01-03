@@ -4,15 +4,13 @@
 #include <unordered_map>
 #include <iostream>
 
-namespace parser
+namespace
 {
-    using Json = nlohmann::json;
-
-    ParserResponse Parser::Parse(const std::string &str)
+    std::pair<std::string_view, std::string_view> Split(std::string_view str)
     {
         size_t first_command_index = 0;
         size_t last_command_index = 0;
-        ECommands command = ECommands::kParseError;
+        parser::ECommands command = parser::ECommands::kParseError;
 
         for (first_command_index = 0; first_command_index < str.size(); ++first_command_index)
             if (str[first_command_index] != ' ')
@@ -28,8 +26,25 @@ namespace parser
             --last_command_index;
 
         std::string_view view = str;
-        std::string_view command_str = view.substr(first_command_index, last_command_index);
-        std::string_view data_str = view.substr(last_command_index < str.size() - 1 ? last_command_index + 1 : last_command_index, str.size());
+        std::string_view first = view.substr(first_command_index, last_command_index);
+        std::string_view second = view.substr(last_command_index < str.size() - 1 ? last_command_index + 1 : last_command_index, str.size());
+
+        return {first, second};
+    }
+
+    bool ContainsSpace(std::string_view str){
+        for(const auto symb: str) if(symb == ' ') return true;
+        return false;
+    }
+} // namespace
+
+namespace parser
+{
+    using Json = nlohmann::json;
+
+    ParserResponse Parser::Parse(const std::string &str)
+    {
+        auto [command_str, data_str] = Split(str);
 
         if (command_str == "SET")
             return SetDataParse(data_str);
@@ -65,7 +80,10 @@ namespace parser
         }
         catch (...)
         {
-            return {ECommands::kParseError};
+            if(ContainsSpace(data_str)) return {ECommands::kParseError};
+            Vector vec{};
+            vec.push_back(std::string(data_str.substr(0, data_str.size()-1)));
+            return {ECommands::kGet, {}, std::move(vec)};
         }
     }
     ParserResponse Parser::DelDataParse(std::string_view data_str)
@@ -90,7 +108,10 @@ namespace parser
         }
         catch (...)
         {
-            return {ECommands::kParseError};
+            if(ContainsSpace(data_str)) return {ECommands::kParseError};
+            Vector vec{};
+            vec.push_back(std::string(data_str.substr(0, data_str.size()-1)));
+            return {ECommands::kDel, {}, std::move(vec)};
         }
     }
     ParserResponse Parser::KeysDataParse(std::string_view data_str)
@@ -127,10 +148,21 @@ namespace parser
 
             return {ECommands::kSet, std::move(map)};
         }
-        catch (const std::exception &e)
+        catch (...)
         {
-            std::cout << "Exception: " << e.what() << std::endl;
-            return {ECommands::kParseError};
+            try
+            {
+                auto [key, value] = Split(data_str);
+                auto json_obj = Json::parse(value);
+                Map map{};
+                map.insert({std::string(key), json_obj.dump()});
+                return {ECommands::kSet, std::move(map)};
+            }
+            catch (const std::exception &e)
+            {
+                std::cout << "Exception: " << e.what() << std::endl;
+                return {ECommands::kParseError};
+            }
         }
     }
 
