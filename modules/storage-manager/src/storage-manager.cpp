@@ -32,26 +32,39 @@ namespace l1_memory_cache
     void StorageManager::Set(const KeyType &key, const ValueType &value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        if(!map_.insert({key, value}).second) throw std::runtime_error("Key already exists");
+        auto iterator_exists = map_.insert({key, value});
+
+        if (!iterator_exists.second)
+            iterator_exists.first->second = value;
     }
     void StorageManager::Set(const KeyType &key, ValueType &&value)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        if(!map_.insert({key, std::move(value)}).second) throw std::runtime_error("Key already exists");
+        auto iterator_exists = map_.insert({key, std::move(value)});
+
+        if (!iterator_exists.second)
+            iterator_exists.first->second = std::move(value);
     }
     void StorageManager::Set(const Map &map)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        for (const auto &[key, value] : map){
-            if(!map_.insert({key, value}).second) throw std::runtime_error("Key already exists");
-            
+        for (const auto &[key, value] : map)
+        {
+             auto [iterator, inserted] = map_.insert({key, value});
+
+            if (!inserted)
+                iterator->second = value;
         }
     }
     void StorageManager::Set(Map &&map)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        for (const auto &[key, value] : map){
-            if(!map_.insert({key, std::move(value)}).second) throw std::runtime_error("Key already exists");
+        for (auto &&[key, value] : map)
+        {
+            auto [iterator, inserted] = map_.insert({key, std::move(value)});
+
+            if (!inserted)
+                iterator->second = std::move(value);
         }
     }
 

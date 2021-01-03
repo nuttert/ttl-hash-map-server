@@ -118,7 +118,6 @@ namespace parser
 
         try
         {
-            std::cout << "DDDDATA:" << data_str << std::endl;
             auto json_obj = Json::parse(data_str);
             if (!json_obj.is_object())
                 return {ECommands::kIsNotKeyValueMapError};
